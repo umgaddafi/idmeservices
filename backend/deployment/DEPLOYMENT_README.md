@@ -27,8 +27,8 @@ Important values:
 
 - `APP_ENV=production`
 - `APP_DEBUG=false`
-- `APP_URL=https://www.idmeservices.com.ng`
-- `FRONTEND_URL=https://www.idmeservices.com.ng`
+- `APP_URL=https://kump.jostumservices.com` during Bluehost testing
+- `FRONTEND_URL=https://kump.jostumservices.com` during Bluehost testing
 - Bluehost MySQL credentials
 - Paystack and KhadVerify keys
 
@@ -66,9 +66,10 @@ If `/api/bootstrap`, `/api/services`, or `/api/auth/login` return `500` on Blueh
 1. `backend/.env` contains malformed URLs such as `https:https://...`
 2. `APP_KEY` is empty
 3. MySQL credentials are wrong
-4. Required database tables have not been migrated
-5. `backend/storage` and `backend/bootstrap/cache` are not writable
-6. PHP version or extensions on the server do not satisfy Laravel requirements
+4. `DB_HOST` should be `localhost` on Bluehost instead of `127.0.0.1`
+5. Required database tables have not been migrated
+6. `backend/storage` and `backend/bootstrap/cache` are not writable
+7. PHP version or extensions on the server do not satisfy Laravel requirements
 
 ## 6. Log File
 
