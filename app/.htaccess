@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
+    RewriteEngine On
+
+    # Public uploads are stored by Laravel inside backend/public/uploads.
+    RewriteRule ^uploads/(.*)$ backend/public/uploads/$1 [L,NC]
+
+    # Send API requests to Laravel while keeping /api/... as the request URI.
+    RewriteRule ^api(?:/(.*))?$ backend/public/index.php [L,QSA,NC]
+
+    # Serve existing frontend files/assets normally.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # React/Vite SPA fallback.
+    RewriteRule ^ index.html [L]
+</IfModule>

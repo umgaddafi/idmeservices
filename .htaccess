@@ -4,6 +4,7 @@
     </IfModule>
 
     RewriteEngine On
+    DirectoryIndex index.php
 
     # Public uploads are stored by Laravel inside backend/public/uploads.
     RewriteRule ^uploads/(.*)$ backend/public/uploads/$1 [L,NC]
@@ -11,11 +12,20 @@
     # Send API requests to Laravel while keeping /api/... as the request URI.
     RewriteRule ^api(?:/(.*))?$ backend/public/index.php [L,QSA,NC]
 
-    # Serve existing frontend files/assets normally.
+    # Frontend build files live in /app, but the SPA still references a few root-style asset paths.
+    RewriteRule ^assets/(.*)$ app/assets/$1 [L,NC]
+    RewriteRule ^models/(.*)$ app/models/$1 [L,NC]
+    RewriteRule ^pwa-icons/(.*)$ app/pwa-icons/$1 [L,NC]
+    RewriteRule ^manifest\.webmanifest$ app/manifest.webmanifest [L,NC]
+    RewriteRule ^sw\.js$ app/sw.js [L,NC]
+    RewriteRule ^ninofficialcheck-logo\.svg$ app/ninofficialcheck-logo.svg [L,NC]
+    RewriteRule ^idmeservices-logo\.svg$ app/idmeservices-logo.svg [L,NC]
+
+    # Serve existing files/assets normally.
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # React/Vite SPA fallback.
-    RewriteRule ^ index.html [L]
+    # SPA fallback served from the built frontend entrypoint in /app.
+    RewriteRule ^ index.php [L]
 </IfModule>

@@ -1,0 +1,68 @@
+﻿{
+  "id": "./",
+  "name": "IDM e-Services",
+  "short_name": "NINCheck",
+  "description": "NIN and BVN verification portal with wallet funding, verification templates, and member activity tracking.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3fbf6",
+  "theme_color": "#0f7a57",
+  "categories": ["finance", "utilities", "business"],
+  "icons": [
+    {
+      "src": "./pwa-icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./pwa-icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Open the member dashboard.",
+      "url": "./dashboard",
+      "icons": [
+        {
+          "src": "./pwa-icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Verify NIN",
+      "short_name": "NIN",
+      "description": "Open the NIN verification template flow.",
+      "url": "./select_nin_template",
+      "icons": [
+        {
+          "src": "./pwa-icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Verify Phone",
+      "short_name": "Phone",
+      "description": "Open the phone verification flow.",
+      "url": "./verify_phone",
+      "icons": [
+        {
+          "src": "./pwa-icons/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}
+
