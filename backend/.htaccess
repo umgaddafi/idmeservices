@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
+    RewriteEngine On
+
+    # If someone visits /backend directly, serve Laravel from backend/public.
+    RewriteRule ^$ public/index.php [L]
+
+    # Let real files and folders inside backend load normally.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else in /backend goes to Laravel.
+    RewriteRule ^ public/index.php [L,QSA]
+</IfModule>
