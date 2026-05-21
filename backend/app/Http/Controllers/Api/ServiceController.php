@@ -10,20 +10,30 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 class ServiceController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Service::query()->orderBy('sort_order')->orderBy('title');
+        try {
+            $query = Service::query()->orderBy('sort_order')->orderBy('title');
 
-        if ($request->boolean('homepage')) {
-            $query->where('show_on_homepage', true)->where('status', 'Live');
+            if ($request->boolean('homepage')) {
+                $query->where('show_on_homepage', true)->where('status', 'Live');
+            }
+
+            return response()->json([
+                'services' => $query->get()->map(fn (Service $service): array => ServicePayload::from($service))->values(),
+            ]);
+        } catch (Throwable) {
+            return response()->json([
+                'services' => collect($this->fallbackServices())
+                    ->when($request->boolean('homepage'), fn ($services) => $services->where('showOnHomepage', true)->where('status', 'Live'))
+                    ->sortBy([['sortOrder', 'asc'], ['title', 'asc']])
+                    ->values(),
+            ]);
         }
-
-        return response()->json([
-            'services' => $query->get()->map(fn (Service $service): array => ServicePayload::from($service))->values(),
-        ]);
     }
 
     public function store(Request $request): JsonResponse
@@ -143,5 +153,46 @@ class ServiceController extends Controller
         $image->move($directory, $filename);
 
         return '/uploads/services/'.$filename;
+    }
+
+    private function fallbackServices(): array
+    {
+        return [
+            $this->fallbackService('1', 'NIN Verification', 'nin-verification', 'verification', 'nin', '/select_nin_template', 'Verify National Identification Number details with wallet-based processing.', (float) config('idmeservices.pricing.nin_premium', 150), '/assets/marketing/identity-phone.jpg', 1),
+            $this->fallbackService('2', 'BVN Verification', 'bvn-verification', 'verification', 'bvn', '/verify_bvn', 'Validate Bank Verification Number details from a dedicated service flow.', (float) config('idmeservices.pricing.bvn_premium', 170), '/assets/marketing/laptop-tablet-workflow.jpg', 2),
+            $this->fallbackService('3', 'NIN Modification', 'nin-modification', 'ninModifications', 'name', '/modification/nin', 'Submit NIN name, phone, date of birth, or address modification requests.', (float) config('idmeservices.pricing.modification_name', 8000), '/assets/template-based.png', 3),
+            $this->fallbackService('4', 'Birth Attestation', 'birth-attestation', 'birthAttestations', 'permanent', '/birth-attestation', 'Open permanent and temporary birth attestation requests.', (float) config('idmeservices.pricing.birth_attestation_permanent', 1500), '/assets/dashboard/attestion.png', 4),
+            $this->fallbackService('5', 'IPE / Error 50 Resolution', 'ipe-error-50-resolution', 'resolutions', 'tracking', '/ipe-error-50-resolution', 'Submit a tracking ID for IPE, Error 50, or related resolution processing.', (float) config('idmeservices.pricing.ipe_error_50', 1000), '/assets/marketing/nigerian-professional.jpg', 5),
+            $this->fallbackService('6', 'Diaspora Child Birth Notification', 'diaspora-child-birth-notification', 'diasporaBirth', 'child', '/diaspora-child-birth-notification', 'Parent-linked child identity request for diaspora birth notification.', (float) config('idmeservices.pricing.diaspora_child_birth', 2000), '/assets/dashboard/diaspora_child.png', 6),
+        ];
+    }
+
+    private function fallbackService(
+        string $id,
+        string $title,
+        string $slug,
+        string $category,
+        string $type,
+        string $routePath,
+        string $description,
+        float $amount,
+        string $imageUrl,
+        int $sortOrder
+    ): array {
+        return [
+            'id' => $id,
+            'title' => $title,
+            'slug' => $slug,
+            'category' => $category,
+            'type' => $type,
+            'routePath' => $routePath,
+            'description' => $description,
+            'amount' => $amount,
+            'price' => 'N'.number_format($amount, 2),
+            'status' => 'Live',
+            'imageUrl' => $imageUrl,
+            'sortOrder' => $sortOrder,
+            'showOnHomepage' => true,
+        ];
     }
 }

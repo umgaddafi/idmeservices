@@ -3,18 +3,20 @@
 namespace App\Support\Api;
 
 use App\Models\SystemSetting;
+use Throwable;
 
 class CurrencyPayload
 {
     public static function current(): array
     {
-        $default = config('idmeservices.currency', [
-            'code' => 'USD',
-            'locale' => 'en-US',
-            'rate' => 1,
-        ]);
+        $default = self::defaults();
 
-        $branding = SystemSetting::query()->first()?->branding ?? [];
+        try {
+            $branding = SystemSetting::query()->first()?->branding ?? [];
+        } catch (Throwable) {
+            $branding = [];
+        }
+
         $currency = is_array($branding['currency'] ?? null)
             ? array_merge($default, $branding['currency'])
             : $default;
@@ -29,5 +31,14 @@ class CurrencyPayload
     public static function code(): string
     {
         return self::current()['code'];
+    }
+
+    public static function defaults(): array
+    {
+        return config('idmeservices.currency', [
+            'code' => 'USD',
+            'locale' => 'en-US',
+            'rate' => 1,
+        ]);
     }
 }
