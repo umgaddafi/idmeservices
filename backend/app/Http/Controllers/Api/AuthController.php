@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AuthController extends Controller
 {
@@ -77,7 +78,13 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $user = User::query()->where('email', $data['email'])->first();
+        try {
+            $user = User::query()->where('email', $data['email'])->first();
+        } catch (Throwable) {
+            return response()->json([
+                'message' => 'The backend is online, but the database connection is not ready. Please check the Bluehost MySQL username, password, and database privileges.',
+            ], 503);
+        }
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
             return response()->json(['message' => 'The credentials provided do not match our records.'], 422);
@@ -89,12 +96,18 @@ class AuthController extends Controller
 
         $plainTextToken = Str::random(64);
 
-        $token = ApiToken::query()->create([
-            'user_id' => $user->id,
-            'name' => 'web',
-            'token_hash' => hash('sha256', $plainTextToken),
-            'expires_at' => now()->addDays(7),
-        ]);
+        try {
+            $token = ApiToken::query()->create([
+                'user_id' => $user->id,
+                'name' => 'web',
+                'token_hash' => hash('sha256', $plainTextToken),
+                'expires_at' => now()->addDays(7),
+            ]);
+        } catch (Throwable) {
+            return response()->json([
+                'message' => 'Login was accepted, but the backend could not create a session token. Please confirm the api_tokens table exists and the database user can write to it.',
+            ], 503);
+        }
 
         return response()->json([
             'token' => $plainTextToken,
