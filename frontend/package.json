@@ -5,7 +5,8 @@
   "scripts": {
     "dev:api": "node ./scripts/dev-api.js",
     "dev:frontend": "node ./node_modules/vite/bin/vite.js --host 0.0.0.0",
-    "dev": "node ./scripts/dev-with-api.js",
+    "dev:full": "node ./scripts/dev-with-api.js",
+    "dev": "node ./node_modules/vite/bin/vite.js --host 0.0.0.0",
     "build": "node ./node_modules/vite/bin/vite.js build",
     "preview": "node ./node_modules/vite/bin/vite.js preview --host 0.0.0.0"
   },

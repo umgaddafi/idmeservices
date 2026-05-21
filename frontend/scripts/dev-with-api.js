@@ -6,6 +6,7 @@ const frontendDir = path.resolve(__dirname, "..");
 const backendDir = path.resolve(frontendDir, "..", "backend");
 const projectRoot = path.resolve(frontendDir, "..");
 const phpBinary = resolvePhpBinary();
+const laravelPort = process.env.LARAVEL_DEV_PORT || "8000";
 
 const processes = [];
 let shuttingDown = false;
@@ -13,6 +14,7 @@ let shuttingDown = false;
 function resolvePhpBinary() {
   const candidates = [
     process.env.PHP_BINARY,
+    "/opt/lampp/bin/php",
     path.resolve(projectRoot, "..", "..", "php", "php.exe"),
     "C:\\xampp\\php\\php.exe",
     "C:\\laragon\\bin\\php\\php-8.3\\php.exe",
@@ -83,8 +85,8 @@ function shutdown(exitCode = 0) {
 process.on("SIGINT", () => shutdown(0));
 process.on("SIGTERM", () => shutdown(0));
 
-console.log("Starting Laravel API on http://localhost");
-startProcess("Laravel API", phpBinary, ["artisan", "serve", "--host=0.0.0.0", "--port=80"], backendDir);
+console.log(`Starting Laravel API on http://localhost:${laravelPort}`);
+startProcess("Laravel API", phpBinary, ["artisan", "serve", "--host=0.0.0.0", `--port=${laravelPort}`], backendDir);
 
 console.log("Starting Vite frontend");
 startProcess("Vite frontend", process.execPath, [path.join(frontendDir, "node_modules", "vite", "bin", "vite.js"), "--host", "0.0.0.0"], frontendDir);
