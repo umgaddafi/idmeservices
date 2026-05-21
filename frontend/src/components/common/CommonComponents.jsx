@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
-import { IdCard, KeyRound, Lock, Mail, Phone, User } from "lucide-react";
+import { KeyRound, Lock, Mail, Phone, User } from "lucide-react";
 
 export function MessageBanner({ tone = "info", children }) {
   if (!children) return null;
@@ -70,7 +70,6 @@ export function AuthPage({
     name: "",
     email: "",
     phone: "",
-    serviceInterest: "",
     password: "",
     confirmPassword: "",
   });
@@ -169,29 +168,6 @@ export function AuthPage({
               ) : null}
 
               <AuthInput label="Email Address" type="email" placeholder={isRegister ? "Enter email address" : "Enter your email"} value={form.email} icon={<Mail size={18} />} onChange={(value) => setForm((current) => ({ ...current, email: value }))} />
-
-              {isRegister ? (
-                <label className="auth-input-label">
-                  <span>Service Interest</span>
-                  <span className="auth-input-box">
-                    <IdCard size={18} />
-                    <select
-                      value={form.serviceInterest}
-                      onChange={(event) => setForm((current) => ({ ...current, serviceInterest: event.target.value }))}
-                    >
-                      <option value="">Select service</option>
-                      <option>NIN Enrollment</option>
-                      <option>NIN Modification</option>
-                      <option>NIN Verification</option>
-                      <option>BVN Modification</option>
-                      <option>BVN Verification</option>
-                      <option>Birth Attestation</option>
-                      <option>IPE / Error 50 Resolution</option>
-                      <option>Diaspora Child Birth Notification</option>
-                    </select>
-                  </span>
-                </label>
-              ) : null}
 
               {isRegister ? (
                 <div className="auth-field-row">
