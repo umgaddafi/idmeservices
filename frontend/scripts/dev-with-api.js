@@ -83,8 +83,8 @@ function shutdown(exitCode = 0) {
 process.on("SIGINT", () => shutdown(0));
 process.on("SIGTERM", () => shutdown(0));
 
-console.log("Starting Laravel API on http://localhost:8000");
-startProcess("Laravel API", phpBinary, ["artisan", "serve", "--host=0.0.0.0", "--port=8000"], backendDir);
+console.log("Starting Laravel API on http://localhost");
+startProcess("Laravel API", phpBinary, ["artisan", "serve", "--host=0.0.0.0", "--port=80"], backendDir);
 
 console.log("Starting Vite frontend");
 startProcess("Vite frontend", process.execPath, [path.join(frontendDir, "node_modules", "vite", "bin", "vite.js"), "--host", "0.0.0.0"], frontendDir);

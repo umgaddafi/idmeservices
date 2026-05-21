@@ -23,7 +23,7 @@ function resolvePhpBinary() {
   return "php";
 }
 
-const child = spawn(resolvePhpBinary(), ["artisan", "serve", "--host=0.0.0.0", "--port=8000"], {
+const child = spawn(resolvePhpBinary(), ["artisan", "serve", "--host=0.0.0.0", "--port=80"], {
   cwd: backendDir,
   stdio: "inherit",
   shell: false,
