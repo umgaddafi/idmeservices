@@ -91,7 +91,18 @@ if ($isAuthenticated && $app && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $executedCommand = $allowedActions[$action] ?? null;
     }
 
-    if ($executedCommand) {
+    if ($action === 'test_api') {
+        try {
+            $req = \Illuminate\Http\Request::create('/api/bootstrap', 'GET');
+            /** @var \Illuminate\Foundation\Http\Kernel $httpKernel */
+            $httpKernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
+            $res = $httpKernel->handle($req);
+            $commandResult = "HTTP " . $res->getStatusCode() . "\n" . $res->getContent();
+            $httpKernel->terminate($req, $res);
+        } catch (\Throwable $e) {
+            $commandResult = "API ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
+        }
+    } elseif ($executedCommand) {
         try {
             // Handle special storage link fallback if symlink function is disabled by host
             if ($action === 'storage_link' && !function_exists('symlink')) {
