@@ -116,6 +116,59 @@ if ($isAuthenticated && $app && $_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (\Throwable $e) {
             $commandResult = "API ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
         }
+    } elseif ($action === 'import_sql') {
+        try {
+            $sqlCandidates = [
+                __DIR__ . '/ninverify.sql',
+                dirname(__DIR__) . '/ninverify.sql',
+                $backendPath . '/../ninverify.sql',
+            ];
+            $sqlFile = null;
+            foreach ($sqlCandidates as $candidate) {
+                if (file_exists($candidate)) {
+                    $sqlFile = realpath($candidate);
+                    break;
+                }
+            }
+            if (!$sqlFile) {
+                throw new \Exception("ninverify.sql not found in candidate paths: " . implode(', ', $sqlCandidates));
+            }
+            $sql = file_get_contents($sqlFile);
+            \Illuminate\Support\Facades\DB::unprepared($sql);
+            $count = \Illuminate\Support\Facades\DB::table('users')->count();
+            $commandResult = "✓ Database imported successfully from " . basename($sqlFile) . "!\nTotal users in database: " . $count;
+        } catch (\Throwable $e) {
+            $commandResult = "SQL IMPORT ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
+        }
+    } elseif ($action === 'check_users') {
+        try {
+            $users = \Illuminate\Support\Facades\DB::table('users')->select('id', 'name', 'email', 'role', 'wallet_balance', 'status')->get();
+            $commandResult = "Users found (" . count($users) . "):\n" . json_encode($users, JSON_PRETTY_PRINT);
+        } catch (\Throwable $e) {
+            $commandResult = "DATABASE QUERY ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
+        }
+    } elseif ($action === 'test_login') {
+        try {
+            $email = trim((string) ($_POST['test_email'] ?? 'umgaddafi6@gmail.com'));
+            $password = (string) ($_POST['test_password'] ?? '12345678');
+            $user = \App\Models\User::where('email', $email)->first();
+            if (!$user) {
+                $commandResult = "✕ User not found with email: " . $email;
+            } else {
+                $match = \Illuminate\Support\Facades\Hash::check($password, $user->password);
+                $token = $match ? $user->createToken('test_token')->plainTextToken : 'N/A';
+                $commandResult = "✓ User Found:\n" .
+                    "ID: {$user->id}\n" .
+                    "Name: {$user->name}\n" .
+                    "Email: {$user->email}\n" .
+                    "Role: {$user->role}\n" .
+                    "Status: {$user->status}\n" .
+                    "Password Match: " . ($match ? "YES (Correct)" : "NO (Wrong Password)") . "\n" .
+                    "Token Generated: " . ($match ? "YES (Sanctum working!)" : "NO");
+            }
+        } catch (\Throwable $e) {
+            $commandResult = "LOGIN TEST ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
+        }
     } elseif ($action === 'migrate' && !class_exists('DOMDocument')) {
         try {
             /** @var \Illuminate\Database\Migrations\Migrator $migrator */
@@ -350,7 +403,48 @@ if ($app) {
                         <small>php artisan migrate:status</small>
                     </button>
                 </form>
+
+                <form method="POST" action="">
+                    <input type="hidden" name="key" value="<?= htmlspecialchars($providedKey) ?>">
+                    <input type="hidden" name="action" value="import_sql">
+                    <button type="submit" class="btn-success">
+                        <span>📥 Import ninverify.sql</span>
+                        <small>Populate database with all tables & users</small>
+                    </button>
+                </form>
+
+                <form method="POST" action="">
+                    <input type="hidden" name="key" value="<?= htmlspecialchars($providedKey) ?>">
+                    <input type="hidden" name="action" value="check_users">
+                    <button type="submit" class="btn-primary">
+                        <span>👥 List Users</span>
+                        <small>Verify registered users & passwords</small>
+                    </button>
+                </form>
+
+                <form method="POST" action="">
+                    <input type="hidden" name="key" value="<?= htmlspecialchars($providedKey) ?>">
+                    <input type="hidden" name="action" value="test_api">
+                    <button type="submit">
+                        <span>🧪 Test /api/bootstrap</span>
+                        <small>Verify API response & errors</small>
+                    </button>
+                </form>
             </div>
+        </div>
+
+        <!-- Direct Login Tester -->
+        <div class="card">
+            <h2>🔑 Test User Credentials</h2>
+            <form method="POST" action="">
+                <input type="hidden" name="key" value="<?= htmlspecialchars($providedKey) ?>">
+                <input type="hidden" name="action" value="test_login">
+                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px;">
+                    <input type="text" name="test_email" value="umgaddafi6@gmail.com" placeholder="User Email" required>
+                    <input type="text" name="test_password" value="12345678" placeholder="User Password" required>
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 10px 24px;">Verify User</button>
+                </div>
+            </form>
         </div>
 
         <!-- Custom Command Runner -->
