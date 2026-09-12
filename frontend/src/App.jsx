@@ -17,7 +17,7 @@ import {
 import { apiRequest } from "./lib/api.js";
 import { generateBvnSlipPdf } from "./lib/bvnPdf.js";
 import { generateNinSlipPdf } from "./lib/ninPdf.js";
-import { setCurrencyConfig } from "./lib/currency.js";
+import { formatCurrency, setCurrencyConfig } from "./lib/currency.js";
 import { AppLayout } from "./components/layout/AppLayout.jsx";
 import { AuthPage, ProtectedPage, ToastHost } from "./components/common/CommonComponents.jsx";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage.jsx";
@@ -120,7 +120,7 @@ export function App() {
   });
   const [externalWalletState, setExternalWalletState] = useState({
     balance: null,
-    currency: "USD",
+    currency: "NGN",
     loading: false,
     fetchedAt: "",
     message: null,
@@ -160,7 +160,7 @@ export function App() {
         title: "Premium",
         displayTitle: "BVN Premium",
         amount: 170,
-        price: "$170.00",
+        price: formatCurrency(170),
       },
     [currentBvnTemplateOptions],
   );
@@ -234,7 +234,7 @@ export function App() {
       const payload = await apiRequest("/wallet/api-balance", { token: sessionToken });
       const nextState = {
         balance: Number(payload.balance || 0),
-        currency: payload.currency || "USD",
+        currency: payload.currency || "NGN",
         loading: false,
         fetchedAt: payload.fetchedAt || new Date().toISOString(),
         message: null,

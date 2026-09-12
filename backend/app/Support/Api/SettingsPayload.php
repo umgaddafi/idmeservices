@@ -28,9 +28,10 @@ class SettingsPayload
             'totalPoolLiquidity' => (float) User::query()->sum('wallet_balance'),
             'branding' => UrlPayload::branding($branding),
             'currency' => [
-                'code' => strtoupper((string) ($currency['code'] ?? 'USD')),
-                'locale' => (string) ($currency['locale'] ?? 'en-US'),
-                'rate' => (float) ($currency['rate'] ?? 1),
+                'code' => 'NGN',
+                'symbol' => '₦',
+                'locale' => 'en-NG',
+                'rate' => 1.0,
             ],
             'pricingSource' => config('idmeservices.pricing_source', 'env'),
             'smtp' => $settings->smtp ?? [

@@ -1,16 +1,19 @@
 const defaultCurrencyConfig = {
-  code: String(import.meta.env.VITE_APP_CURRENCY_CODE || "USD").toUpperCase(),
-  locale: String(import.meta.env.VITE_APP_CURRENCY_LOCALE || "en-US"),
-  rate: Number(import.meta.env.VITE_APP_CURRENCY_RATE || 1) || 1,
+  code: "NGN",
+  symbol: "₦",
+  locale: "en-NG",
+  rate: 1,
 };
 
 let activeCurrencyConfig = { ...defaultCurrencyConfig };
 
-export function setCurrencyConfig(config = {}) {
+export function setCurrencyConfig(_config = {}) {
+  // Currency is strictly Naira (₦) across the platform
   activeCurrencyConfig = {
-    code: String(config.code || defaultCurrencyConfig.code).toUpperCase(),
-    locale: String(config.locale || defaultCurrencyConfig.locale),
-    rate: Number(config.rate || defaultCurrencyConfig.rate || 1) || 1,
+    code: "NGN",
+    symbol: "₦",
+    locale: "en-NG",
+    rate: 1,
   };
 }
 
@@ -19,19 +22,11 @@ export function getCurrencyConfig() {
 }
 
 export function formatCurrency(amount) {
-  const { code, locale, rate } = activeCurrencyConfig;
-  const displayAmount = Number(amount || 0) * (Number(rate || 1) || 1);
-
-  if (code === "NGN") {
-    return new Intl.NumberFormat(locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(displayAmount).replace(/^/, "₦");
-  }
-
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: code,
+  const numericAmount = Number(amount || 0);
+  const formatted = new Intl.NumberFormat("en-NG", {
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(displayAmount);
+  }).format(numericAmount);
+
+  return `₦${formatted}`;
 }

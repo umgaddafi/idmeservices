@@ -91,7 +91,7 @@ class LoanController extends Controller
         foreach ($loan->guarantors as $guarantor) {
             if ($guarantor->email) {
                 Mail::raw(
-                    sprintf('%s has requested a cooperative loan of NGN %s and listed you as a guarantor.', $loan->member_name, number_format($loan->amount, 2)),
+                    sprintf('%s has requested a cooperative loan of ₦%s and listed you as a guarantor.', $loan->member_name, number_format($loan->amount, 2)),
                     function ($message) use ($guarantor): void {
                         $message->to($guarantor->email)->subject('CoopNest guarantor request');
                     }

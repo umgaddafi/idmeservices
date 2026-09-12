@@ -1,21 +1,42 @@
-<IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews
+# Ensure LiteSpeed and Apache serve index.html by default
+DirectoryIndex index.html index.php
+
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+Options -Indexes +FollowSymLinks
+
+# Deny direct access to sensitive files
+<FilesMatch "^\.(env|git)|(\.sql|\.sh|\.log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
     </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
+<IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
 
-    # Public uploads are stored by Laravel inside backend/public/uploads.
+    # Pass Authorization header to Laravel (crucial for LiteSpeed / Apache)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Public uploads are stored by Laravel inside backend/public/uploads
     RewriteRule ^uploads/(.*)$ backend/public/uploads/$1 [L,NC]
 
-    # Send API requests to Laravel while keeping /api/... as the request URI.
+    # Send API requests to Laravel while keeping /api/... as the request URI
     RewriteRule ^api(?:/(.*))?$ backend/public/index.php [L,QSA,NC]
 
-    # Serve existing frontend files/assets normally.
+    # Serve existing frontend files/assets normally
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # React/Vite SPA fallback.
+    # React/Vite SPA fallback
     RewriteRule ^ index.html [L]
 </IfModule>

@@ -2846,16 +2846,22 @@ h4 {
 .wallet-balance-hidden {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.08em;
-  letter-spacing: 0.08em;
+  gap: 0.14em;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .wallet-balance-hidden-prefix {
   font-size: 1em;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .wallet-balance-hidden-mask {
-  font-size: 0.82em;
+  font-size: 0.84em;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .wallet-actions {
@@ -3177,8 +3183,12 @@ h4 {
 }
 
 .dashboard-balance-copy strong {
+  display: block;
   font-size: clamp(2rem, 3.2vw, 3rem);
   line-height: 1;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .dashboard-panel {
@@ -8004,8 +8014,10 @@ h4 {
   }
 
   .portal-shell--member .portal-content .dashboard-balance-copy strong {
-    font-size: clamp(1.75rem, 11vw, 2.35rem);
-    overflow-wrap: anywhere;
+    font-size: clamp(1.35rem, 6.5vw, 1.95rem);
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
   }
 
   .portal-shell--member .portal-content .service-dashboard-card {
@@ -9048,19 +9060,45 @@ h4 {
     align-items: center;
     flex-direction: row;
     justify-content: space-between;
-    gap: 0.7rem;
+    gap: 0.65rem;
+    padding: 0.95rem 1.05rem;
   }
 
   .portal-shell--member .portal-content .dashboard-balance-copy {
     min-width: 0;
+    flex: 1;
   }
 
   .portal-shell--member .portal-content .dashboard-balance-copy strong {
-    font-size: clamp(1.25rem, 7vw, 1.85rem);
-    line-height: 1.05;
+    font-size: clamp(1.15rem, 5.4vw, 1.55rem);
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  .portal-shell--member .portal-content .wallet-balance-hidden {
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    gap: 0.12em;
+  }
+
+  .portal-shell--member .portal-content .wallet-balance-hidden-prefix,
+  .portal-shell--member .portal-content .wallet-balance-hidden-mask {
+    white-space: nowrap;
   }
 
   .portal-shell--member .portal-content .wallet-actions {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .portal-shell--member .portal-content .wallet-icon-button {
+    width: 2.25rem;
+    height: 2.25rem;
     flex-shrink: 0;
   }
 

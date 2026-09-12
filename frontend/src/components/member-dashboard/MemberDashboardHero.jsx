@@ -29,7 +29,7 @@ export function MemberDashboardHero({ navigate, onRefresh, refreshing, user }) {
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [greeting, setGreeting] = useState(() => getDashboardGreeting());
   const firstName = user?.name ? user.name.split(" ")[0] : null;
-  const currencyCode = getCurrencyConfig().code;
+  const currencySymbol = "₦";
 
   useEffect(() => {
     const refreshGreeting = () => setGreeting(getDashboardGreeting());
@@ -57,7 +57,7 @@ export function MemberDashboardHero({ navigate, onRefresh, refreshing, user }) {
             <strong>{formatMoney(user?.walletBalance)}</strong>
           ) : (
             <strong className="wallet-balance-hidden">
-              <span className="wallet-balance-hidden-prefix">{currencyCode}</span>
+              <span className="wallet-balance-hidden-prefix">{currencySymbol}</span>
               <span className="wallet-balance-hidden-mask">XXXX.XX</span>
             </strong>
           )}

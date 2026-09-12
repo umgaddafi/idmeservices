@@ -117,12 +117,12 @@ class PaystackPaymentConfirmationService
             'Payment Channel' => (string) ($order?->payment_channel ?: data_get($eventPayload, 'data.channel', '')),
             'Gateway Response' => (string) ($order?->gateway_response ?: data_get($eventPayload, 'data.gateway_response', '')),
             'Paid At' => (string) ($order?->paid_at?->toIso8601String() ?: data_get($eventPayload, 'data.paid_at', '')),
-            'Currency' => (string) data_get($eventPayload, 'data.currency', 'NGN'),
+            'Currency' => '₦',
             'Description' => (string) (
                 data_get($eventPayload, 'data.metadata.description')
                 ?: data_get($eventPayload, 'data.metadata.note')
             ),
-            'Wallet Balance' => $walletBalance !== null ? 'NGN '.number_format($walletBalance, 2) : '',
+            'Wallet Balance' => $walletBalance !== null ? '₦'.number_format($walletBalance, 2) : '',
         ];
 
         if (is_array($customFields)) {
@@ -218,7 +218,7 @@ class PaystackPaymentConfirmationService
             'Payment Channel' => (string) (data_get($eventPayload, 'data.channel', '') ?: $payment->provider),
             'Gateway Response' => (string) ($payment->gateway_response ?: data_get($eventPayload, 'data.gateway_response', '')),
             'Paid At' => (string) ($payment->paid_at?->toIso8601String() ?: data_get($eventPayload, 'data.paid_at', '')),
-            'Currency' => (string) ($payment->currency ?: data_get($eventPayload, 'data.currency', 'NGN')),
+            'Currency' => '₦',
             'Description' => 'Afro Village Market order payment',
         ], static fn ($value) => $value !== null && $value !== '');
     }

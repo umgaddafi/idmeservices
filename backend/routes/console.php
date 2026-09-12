@@ -117,7 +117,7 @@ Artisan::command('wallet:reconcile-paystack-reference {reference : Paystack tran
         walletBalance: (float) $result['user']->wallet_balance,
     );
 
-    $this->info("Credited {$result['user']->email} with NGN ".number_format((float) $result['amount'], 2).'.');
+    $this->info("Credited {$result['user']->email} with ₦".number_format((float) $result['amount'], 2).'.');
 
     return 0;
 })->purpose('Verify and credit a successful Paystack dedicated-account transfer by reference');

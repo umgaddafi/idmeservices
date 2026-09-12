@@ -8,8 +8,9 @@ return [
     ],
 
     'currency' => [
-        'code' => strtoupper((string) env('APP_CURRENCY_CODE', 'USD')),
-        'locale' => env('APP_CURRENCY_LOCALE', 'en-US'),
+        'code' => strtoupper((string) env('APP_CURRENCY_CODE', 'NGN')),
+        'symbol' => '₦',
+        'locale' => env('APP_CURRENCY_LOCALE', 'en-NG'),
         'rate' => (float) env('APP_CURRENCY_RATE', 1),
     ],
 

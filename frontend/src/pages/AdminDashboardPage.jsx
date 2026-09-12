@@ -370,9 +370,9 @@ function buildSettingsForm(settings) {
     systemName: settings?.branding?.systemName || "IDM e-Services",
     supportEmail: settings?.supportEmail || "",
     supportPhone: settings?.supportPhone || "",
-    currencyCode: settings?.currency?.code || "USD",
-    currencyLocale: settings?.currency?.locale || "en-US",
-    currencyRate: settings?.currency?.rate || 1,
+    currencyCode: "NGN",
+    currencyLocale: "en-NG",
+    currencyRate: 1,
     pricingSource: settings?.pricingSource || "env",
     registrationMode: settings?.registrationMode || "OPEN",
     smtpHost: settings?.smtp?.host || "",
@@ -409,9 +409,10 @@ function SettingsManager({ settings, onUpdateSettings }) {
       body.append("branding[systemName]", form.systemName);
       body.append("supportEmail", form.supportEmail);
       body.append("supportPhone", form.supportPhone);
-      body.append("branding[currency][code]", form.currencyCode);
-      body.append("branding[currency][locale]", form.currencyLocale);
-      body.append("branding[currency][rate]", form.currencyRate);
+      body.append("branding[currency][code]", "NGN");
+      body.append("branding[currency][symbol]", "₦");
+      body.append("branding[currency][locale]", "en-NG");
+      body.append("branding[currency][rate]", "1");
       body.append("registrationMode", form.registrationMode);
       body.append("smtp[host]", form.smtpHost);
       body.append("smtp[port]", form.smtpPort);
@@ -445,19 +446,8 @@ function SettingsManager({ settings, onUpdateSettings }) {
             <TextField label="Support phone" value={form.supportPhone} onChange={(event) => updateForm({ supportPhone: event.target.value })} fullWidth />
           </Stack>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-            <TextField select label="Currency" value={form.currencyCode} onChange={(event) => {
-              const code = event.target.value;
-              updateForm({
-                currencyCode: code,
-                currencyLocale: code === "NGN" ? "en-NG" : "en-US",
-                currencyRate: code === "NGN" ? (Number(form.currencyRate) === 1 ? 1600 : form.currencyRate) : 1,
-              });
-            }} fullWidth helperText="Controls displayed wallet balances, pricing, and transactions">
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="NGN">Naira</MenuItem>
-            </TextField>
-            <TextField label="Currency locale" value={form.currencyLocale} onChange={(event) => updateForm({ currencyLocale: event.target.value })} fullWidth helperText="Example: en-US or en-NG" />
-            <TextField label="Conversion rate" type="number" value={form.currencyRate} onChange={(event) => updateForm({ currencyRate: event.target.value })} fullWidth helperText="Displayed amount = stored amount x rate" />
+            <TextField label="Currency" value="Naira (₦)" fullWidth disabled helperText="Platform currency is strictly set to Naira (₦)" />
+            <TextField label="Currency Symbol" value="₦" fullWidth disabled helperText="Strictly using ₦ symbol" />
             <TextField label="Pricing source (.env)" value={form.pricingSource} fullWidth disabled helperText="APP_PRICING_SOURCE=env keeps service pricing from .env" />
           </Stack>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>

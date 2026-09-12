@@ -52,7 +52,7 @@ class SettingsController extends Controller
             'registrationMode' => ['nullable', Rule::in(['OPEN', 'INVITE_ONLY', 'PAUSED'])],
             'branding.systemName' => ['nullable', 'string', 'max:255'],
             'branding.logoUrl' => ['nullable', 'string', 'max:2048'],
-            'branding.currency.code' => ['nullable', Rule::in(['USD', 'NGN'])],
+            'branding.currency.code' => ['nullable', Rule::in(['NGN'])],
             'branding.currency.locale' => ['nullable', 'string', 'max:32'],
             'branding.currency.rate' => ['nullable', 'numeric', 'min:0.000001'],
             'logo' => ['nullable', 'image', 'max:4096'],
@@ -74,6 +74,12 @@ class SettingsController extends Controller
         if (isset($data['branding']) && is_array($data['branding'])) {
             $branding = array_merge($branding, $data['branding']);
         }
+        $branding['currency'] = [
+            'code' => 'NGN',
+            'symbol' => '₦',
+            'locale' => 'en-NG',
+            'rate' => 1.0,
+        ];
         if ($request->hasFile('logo')) {
             $logoPath = $this->storeBrandingImage($request->file('logo'), 'logo');
             $branding['logoUrl'] = $logoPath;

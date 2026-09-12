@@ -38,8 +38,8 @@
                         <tr>
                             <td style="padding:18px 0; font-size:15px; border-bottom:1px solid #2d2d2d;">{{ $item['name'] }}</td>
                             <td align="center" style="padding:18px 0; font-size:15px; border-bottom:1px solid #2d2d2d;">{{ rtrim(rtrim(number_format((float) $item['quantity'], 2), '0'), '.') }}</td>
-                            <td align="right" style="padding:18px 0; font-size:15px; border-bottom:1px solid #2d2d2d;">NGN {{ number_format((float) $item['unitPrice'], 2) }}</td>
-                            <td align="right" style="padding:18px 0; font-size:15px; border-bottom:1px solid #2d2d2d;">NGN {{ number_format((float) $item['subtotal'], 2) }}</td>
+                            <td align="right" style="padding:18px 0; font-size:15px; border-bottom:1px solid #2d2d2d;">₦{{ number_format((float) $item['unitPrice'], 2) }}</td>
+                            <td align="right" style="padding:18px 0; font-size:15px; border-bottom:1px solid #2d2d2d;">₦{{ number_format((float) $item['subtotal'], 2) }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -48,9 +48,9 @@
 
             @if(!empty($totals))
                 <div style="margin-bottom:28px; padding-top:10px; border-top:1px solid #343434;">
-                    <p style="margin:0 0 14px; font-size:16px;"><strong>Items Total:</strong> NGN {{ number_format((float) ($totals['itemsTotal'] ?? 0), 2) }}</p>
-                    <p style="margin:0 0 14px; font-size:16px;"><strong>Shipping Fee:</strong> NGN {{ number_format((float) ($totals['shippingFee'] ?? 0), 2) }}</p>
-                    <p style="margin:0; font-size:16px;"><strong>Total Paid:</strong> NGN {{ number_format((float) ($totals['totalPaid'] ?? $amount), 2) }}</p>
+                    <p style="margin:0 0 14px; font-size:16px;"><strong>Items Total:</strong> ₦{{ number_format((float) ($totals['itemsTotal'] ?? 0), 2) }}</p>
+                    <p style="margin:0 0 14px; font-size:16px;"><strong>Shipping Fee:</strong> ₦{{ number_format((float) ($totals['shippingFee'] ?? 0), 2) }}</p>
+                    <p style="margin:0; font-size:16px;"><strong>Total Paid:</strong> ₦{{ number_format((float) ($totals['totalPaid'] ?? $amount), 2) }}</p>
                 </div>
             @endif
 
@@ -76,13 +76,13 @@
             @endif
 
             <div style="background:#151515; border:1px solid #2a2a2a; border-radius:18px; padding:18px 20px;">
-                <p style="margin:0 0 10px; font-size:15px;"><strong>Amount Paid:</strong> NGN {{ number_format($amount, 2) }}</p>
+                <p style="margin:0 0 10px; font-size:15px;"><strong>Amount Paid:</strong> ₦{{ number_format($amount, 2) }}</p>
                 @foreach($details as $label => $value)
                     @if(!in_array($label, ['Order Number', 'Payment Reference', 'Order Status']) && $value !== null && $value !== '')
                         <p style="margin:0 0 10px; font-size:14px; color:#d0d0d0;"><strong>{{ $label }}:</strong> {{ $value }}</p>
                     @endif
                 @endforeach
-                <p style="margin:0; font-size:14px; color:#d0d0d0;"><strong>Wallet Balance:</strong> NGN {{ number_format($walletBalance, 2) }}</p>
+                <p style="margin:0; font-size:14px; color:#d0d0d0;"><strong>Wallet Balance:</strong> ₦{{ number_format($walletBalance, 2) }}</p>
             </div>
 
             <p style="margin:28px 0 0; font-size:16px; line-height:1.8;">Thank you for shopping with AFRO VILLAGE MARKET.</p>
