@@ -9,6 +9,20 @@ declare(strict_types=1);
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
+// Polyfill for mb_split if host PHP installation lacks oniguruma/mbstring regex support
+if (!function_exists('mb_split')) {
+    function mb_split(string $pattern, string $string, int $limit = -1): array|false {
+        $clean = str_replace(['\\s+', '[-_\\s]+'], ['\s+', '[-_\s]+'], $pattern);
+        $regex = '/' . str_replace('/', '\/', $clean) . '/u';
+        $res = @preg_split($regex, $string, $limit);
+        if ($res === false) {
+            $regex = '/' . str_replace('/', '\/', $clean) . '/';
+            $res = preg_split($regex, $string, $limit);
+        }
+        return $res;
+    }
+}
+
 // Locate Laravel backend directory
 $candidates = [
     __DIR__ . '/backend',
@@ -126,6 +140,7 @@ if ($isAuthenticated && $app && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+
 // System diagnostic information
 $systemStatus = [
     'PHP Version' => PHP_VERSION,
@@ -133,6 +148,10 @@ $systemStatus = [
     'Laravel Bootstrapped' => $app ? 'Yes' : 'No',
     '.env Exists' => ($envFile && file_exists($envFile)) ? 'Yes' : 'No',
     'symlink() Available' => function_exists('symlink') ? 'Yes' : 'No (Host Disabled)',
+    'mbstring Extension' => extension_loaded('mbstring') ? 'Yes' : 'No (Polyfilled)',
+    'xml / dom Extension' => extension_loaded('dom') ? 'Yes' : 'No (Required for Artisan CLI)',
+    'fileinfo Extension' => extension_loaded('fileinfo') ? 'Yes' : 'No',
+    'pdo_mysql Extension' => extension_loaded('pdo_mysql') ? 'Yes' : 'No',
 ];
 
 if ($app) {
