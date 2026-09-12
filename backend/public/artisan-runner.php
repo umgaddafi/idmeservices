@@ -116,6 +116,35 @@ if ($isAuthenticated && $app && $_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (\Throwable $e) {
             $commandResult = "API ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
         }
+    } elseif ($action === 'migrate' && !class_exists('DOMDocument')) {
+        try {
+            /** @var \Illuminate\Database\Migrations\Migrator $migrator */
+            $migrator = $app->make('migrator');
+            $repository = $migrator->getRepository();
+            if (!$repository->repositoryExists()) {
+                $repository->createRepository();
+            }
+            $ran = $migrator->run([$backendPath . '/database/migrations']);
+            $commandResult = "Migrations completed directly via Migrator (DOMDocument bypass):\n" . 
+                (empty($ran) ? "Nothing to migrate. Database is already up to date!" : implode("\n", array_map(static fn($f) => "✓ Migrated: " . basename((string) $f), $ran)));
+        } catch (\Throwable $e) {
+            $commandResult = "MIGRATION ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
+        }
+    } elseif ($action === 'db_status' && !class_exists('DOMDocument')) {
+        try {
+            /** @var \Illuminate\Database\Migrations\Migrator $migrator */
+            $migrator = $app->make('migrator');
+            $files = $migrator->getMigrationFiles([$backendPath . '/database/migrations']);
+            $ran = $migrator->getRepository()->getRan();
+            $lines = [];
+            foreach ($files as $name => $path) {
+                $status = in_array($name, $ran, true) ? '✓ Ran    ' : '✕ Pending';
+                $lines[] = "$status: $name";
+            }
+            $commandResult = "Migration Status (DOMDocument bypass):\n" . implode("\n", $lines);
+        } catch (\Throwable $e) {
+            $commandResult = "STATUS ERROR: " . $e->getMessage() . "\n\n" . $e->getTraceAsString();
+        }
     } elseif ($executedCommand) {
         try {
             // Handle special storage link fallback if symlink function is disabled by host
